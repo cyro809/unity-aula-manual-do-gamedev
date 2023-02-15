@@ -2,6 +2,7 @@ using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ControleJogador : MonoBehaviour
 {
@@ -9,15 +10,21 @@ public class ControleJogador : MonoBehaviour
     public int amplitudePulo = 10;
     Rigidbody rb;
     int pontuacao;
+    int pontuacaoAlta;
     bool estaNoChao;
 
     TextMeshProUGUI objeto_pontuacao;
+    TextMeshProUGUI objeto_pontuacao_alta;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         objeto_pontuacao = GameObject.FindWithTag("Pontuacao").GetComponent<TextMeshProUGUI>();
+        objeto_pontuacao_alta = GameObject.FindWithTag("PontuacaoAlta").GetComponent<TextMeshProUGUI>();
+        
         pontuacao = 0;
+        pontuacaoAlta = PlayerPrefs.GetInt("pontuacaoAlta", 0);
+        objeto_pontuacao_alta.text = "Pontuacao Mais Alta: " + pontuacaoAlta.ToString();
         estaNoChao = false;
     }
 
@@ -38,6 +45,10 @@ public class ControleJogador : MonoBehaviour
         if(outro.gameObject.CompareTag("Moeda")) {
             pontuacao++;
             objeto_pontuacao.text = "Pontuacao: " + pontuacao.ToString();
+            if (pontuacao > pontuacaoAlta) {
+                objeto_pontuacao_alta.text = "Pontuacao Mais Alta: " + pontuacao.ToString();
+                PlayerPrefs.SetInt("pontuacaoAlta", pontuacao);
+            }
             Destroy(outro.gameObject);
         }
     }
@@ -45,6 +56,10 @@ public class ControleJogador : MonoBehaviour
     void OnCollisionEnter(Collision outro) {
         if(outro.gameObject.CompareTag("Chao")) {
             estaNoChao = true;
+        }
+        if (outro.gameObject.CompareTag("Inimigo")) {
+            Scene cena = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(cena.name);
         }
     }
 }

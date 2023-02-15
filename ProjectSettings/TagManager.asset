@@ -7,6 +7,8 @@ TagManager:
   - Moeda
   - Pontuacao
   - Chao
+  - Inimigo
+  - PontuacaoAlta
   layers:
   - Default
   - TransparentFX
